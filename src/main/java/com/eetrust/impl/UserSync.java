@@ -16,7 +16,7 @@ import static com.eetrust.util.WebServiceUtils.webserviceInvok;
 /**
  * @Author huangg
  * @create 2024/1/16 14:16
- * 组织同步实现类
+ * 人员同步实现类
  */
 @Repository
 public class UserSync implements DataRepository<EmpDataDTO> {
