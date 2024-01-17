@@ -23,4 +23,11 @@ public class aa {
         System.out.println(xml);
         webserviceInvok("http://10.3.44.33:8090/securedoc/clientinterface/syncData/ISyncWebService",xml);
     }
+    @RequestMapping("/cc")
+    public void cc(){
+        String xml="<root><privateKey>UAP_2oSY90</privateKey><srcContent /><dataContent><syncContent dataType=\"2\" operType=\"1\"><syncUnicode>zengwj</syncUnicode><newContent><baseInfo><loginName>zengwj</loginName><accountStatus>1</accountStatus><userName>曾文菁</userName><secLevel>2</secLevel></baseInfo><parentInfo><parentCode>0410000043</parentCode></parentInfo></newContent></syncContent></dataContent></root>";
+        log.info("xml->"+xml);
+        System.out.println(xml);
+        webserviceInvok("http://10.3.44.33:8090/securedoc/clientinterface/syncData/ISyncWebService",xml);
+    }
 }
