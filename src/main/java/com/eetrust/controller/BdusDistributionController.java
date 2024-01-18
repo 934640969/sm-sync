@@ -2,6 +2,8 @@ package com.eetrust.controller;
 
 import com.sf.bdus.dist.client.repository.DataRepository;
 import com.sf.bdus.dist.client.service.BdusDistributionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -20,6 +22,8 @@ import java.util.List;
 @RequestMapping("/bdus/distribution")
 @Controller
 public class BdusDistributionController {
+
+    private static final Logger log = LoggerFactory.getLogger(BdusDistributionController.class);
 
     /**
      * BDUS数据分发服务
@@ -54,6 +58,7 @@ public class BdusDistributionController {
     @RequestMapping(method = RequestMethod.POST)
     public void distribute(HttpServletRequest request,
                            HttpServletResponse response) throws IOException {
+        log.info("Received BDUS data distribution request");
         distributionService.distribute(request, response);
     }
 }

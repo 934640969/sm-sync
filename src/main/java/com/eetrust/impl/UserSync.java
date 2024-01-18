@@ -3,6 +3,8 @@ package com.eetrust.impl;
 import com.sf.bdus.dist.client.repository.DataRepository;
 import com.sf.bdus.dist.common.context.DataContext;
 import com.sf.bdus.dist.common.dto.EmpDataDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -20,11 +22,14 @@ import static com.eetrust.util.WebServiceUtils.webserviceInvok;
  */
 @Repository
 public class UserSync implements DataRepository<EmpDataDTO> {
+    private static final Logger log = LoggerFactory.getLogger(UserSync.class);
+
     @Value("${sm.url}")
     private String smUrl;
 
     @Override
     public void save(Iterator<EmpDataDTO> iterator, DataContext dataContext) throws IOException {
+        log.info("开始同步人员数据");
         final int batchSize = 100; // 每次保存的记录数目，在处理大量数据时，为了避免将全部数据加载到内存，从而导致内存溢出
         List<EmpDataDTO> empDataDTOS = new ArrayList<>(batchSize);
         while (iterator.hasNext()) {
@@ -32,17 +37,18 @@ public class UserSync implements DataRepository<EmpDataDTO> {
             empDataDTOS.add(empDataDTO);
             if (empDataDTOS.size() >= batchSize) {
                 // 保存数据
-                save(empDataDTOS);
+                baocun(empDataDTOS);
                 empDataDTOS.clear();
             }
         }
         if (!empDataDTOS.isEmpty()) {
             // 保存数据
-            save(empDataDTOS);
+            baocun(empDataDTOS);
         }
     }
 
-    private void save(List<EmpDataDTO> empDataDTOS) {
+    private void baocun(List<EmpDataDTO> empDataDTOS) {
+        log.info("开始保存人员数据");
         for (EmpDataDTO empDataDTO:empDataDTOS){
             String xml="<root>" +
                     "<privateKey>UAP_2oSY90</privateKey>" +
