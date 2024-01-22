@@ -26,6 +26,8 @@ public class DeptSync implements DataRepository<OrgDataDTO> {
 
     @Value("${sm.url}")
     private String smUrl;
+    @Value("${rootCode}")
+    private Long rootCode;
 
     @Override
     public void save(Iterator<OrgDataDTO> iterator, DataContext dataContext) throws IOException {
@@ -50,6 +52,10 @@ public class DeptSync implements DataRepository<OrgDataDTO> {
     private void baocun(List<OrgDataDTO> orgDatas) {
         log.info("开始保存组织数据");
         for (OrgDataDTO orgDataDTO:orgDatas){
+            Long orgIdParent = orgDataDTO.getOrgIdParent();
+            if (orgDataDTO.getOrgId().equals(rootCode)){
+                orgIdParent= rootCode;
+            }
             String xml="<root>" +
                     "<privateKey>UAP_2oSY90</privateKey>" +
                     "<srcContent></srcContent>" +
@@ -61,10 +67,11 @@ public class DeptSync implements DataRepository<OrgDataDTO> {
                     "<deptName>"+orgDataDTO.getOrgName()+"</deptName>" +
                     "<deptUniCode>"+orgDataDTO.getOrgId()+"</deptUniCode>" +
                     "<deptStatus>1</deptStatus>" +
+                    "<showNum>10</showNum>"+
                     "<isCorp>0</isCorp>" +
                     "</baseInfo>" +
                     "<parentInfo>" +
-                    "<parentCode>"+orgDataDTO.getOrgIdParent()+"</parentCode>" +
+                    "<parentCode>"+orgIdParent+"</parentCode>" +
                     "</parentInfo>" +
                     "</newContent></syncContent></dataContent></root>";
             webserviceInvok(smUrl,xml);
