@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.eetrust</groupId>
-    <artifactId>sm-sync-sf</artifactId>
+    <artifactId>sm-sync-ningxia</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>sm-sync-sf</name>
-    <description>sm-sync-sf</description>
+    <name>sm-sync-ningxia</name>
+    <description>sm-sync-ningxia</description>
     <properties>
         <java.version>1.8</java.version>
     </properties>
@@ -20,11 +20,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>5.8.25</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -35,21 +30,6 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
-        </dependency>
-        <!-- 引入本地jar -->
-        <dependency>
-            <groupId>com.sf</groupId>
-            <artifactId>bdus-dist-client</artifactId>
-            <version>4.6</version>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/resources/lib/bdus-dist-client-4.6-20240109.072441-4.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.sf</groupId>
-            <artifactId>bdus-dist-common</artifactId>
-            <version>4.6</version>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/resources/lib/bdus-dist-common-4.6-20240109.072511-4.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.apache.axis</groupId>

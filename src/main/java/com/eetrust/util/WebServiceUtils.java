@@ -10,12 +10,6 @@ import java.net.URL;
 
 public class WebServiceUtils {
 	private static final Logger log = LoggerFactory.getLogger(WebServiceUtils.class);
-	public static void main(String[] args) {
-		// webservice调用
-		String xml="<root><privateKey>UAP_2oSY90</privateKey><srcContent></srcContent><dataContent><syncContent dataType=\"1\" operType=\"1\"><syncUnicode>0410000043</syncUnicode><newContent><baseInfo><deptName>顺丰</deptName><deptUniCode>0410000043</deptUniCode><showNum>9999</showNum><deptStatus>1</deptStatus><isCorp>1</isCorp></baseInfo><parentInfo><parentCode>0410000043</parentCode></parentInfo></newContent></syncContent></dataContent></root>";
-		System.out.println(xml);
-		webserviceInvok("http://10.3.44.33:8090/securedoc/clientinterface/syncData/ISyncWebService",xml);
-	}
 
 	public static void webserviceInvok(String endpoint,String xml) {
 		log.info("webserviceInvok->xml-> "+xml);
@@ -29,12 +23,9 @@ public class WebServiceUtils {
 			URL url = new URL(endpoint);
 			call.setTargetEndpointAddress(url);
 			// 调用WebService方法
-			call.setOperationName(new QName("http://SyncXmlServiceImpl.com/", "dataSync"));
-			// 调用WebService传入参数
-			call.addParameter("syncXml", org.apache.axis.encoding.XMLType.XSD_STRING,
-                    javax.xml.rpc.ParameterMode.IN);
-			call.setReturnType(org.apache.axis.encoding.XMLType.XSD_STRING);
-			String result = String.valueOf(call.invoke(new Object[] {xml}));
+			call.setOperationName("orgAndUserSync");
+			String password="eetrust";
+			String result = String.valueOf(call.invoke(new Object[] {password,xml}));
 			log.info("webserviceInvok->result-> "+result);
 		} catch (Exception e) {
 			log.error("webserviceInvok->Exception->",e);
