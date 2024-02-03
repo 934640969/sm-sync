@@ -78,7 +78,7 @@ public class SyncController {
             JSONObject jsonObject = JSON.parseObject(json);
             String type = jsonObject.getString("type");
             JSONObject user = jsonObject.getJSONObject("user");
-            String jtLoginName = user.getString("jtLoginName");
+            String jtLoginName = user.getString("loginName");
             String orgCode = user.getString("orgCode");
             JSONObject employee = user.getJSONObject("employee");
             String realName = employee.getString("realName");
