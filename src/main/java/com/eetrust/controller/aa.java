@@ -3,6 +3,7 @@ package com.eetrust.controller;
 import com.eetrust.util.WebServiceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,11 +18,15 @@ import static com.eetrust.util.WebServiceUtils.webserviceInvok;
 @RequestMapping("/aa")
 public class aa {
     private static final Logger log = LoggerFactory.getLogger(aa.class);
+
+    @Value("${bdus.systemKey}")
+    private String systemKey;
     @RequestMapping("/bb")
 
     public String bb(){
         String xml="<root><privateKey>UAP_2oSY90</privateKey><srcContent></srcContent><dataContent><syncContent dataType=\"1\" operType=\"1\"><syncUnicode>0410000043</syncUnicode><newContent><baseInfo><deptName>顺丰</deptName><deptUniCode>0410000043</deptUniCode><showNum>9999</showNum><deptStatus>1</deptStatus><isCorp>1</isCorp></baseInfo><parentInfo><parentCode>0410000043</parentCode></parentInfo></newContent></syncContent></dataContent></root>";
         log.info("xml->"+xml);
+        log.info("systemKey->"+systemKey);
        // webserviceInvok("http://10.3.44.33:8090/securedoc/clientinterface/syncData/ISyncWebService",xml);
         return "200";
     }
