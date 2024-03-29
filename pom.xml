@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.eetrust</groupId>
-    <artifactId>sm-sync-sf</artifactId>
+    <artifactId>sm-sync-xinjiang</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>sm-sync-sf</name>
-    <description>sm-sync-sf</description>
+    <name>sm-sync-xinjiang</name>
+    <description>sm-sync-xinjiang</description>
     <properties>
         <java.version>1.8</java.version>
     </properties>
@@ -38,44 +38,62 @@
         </dependency>
         <!-- 引入本地jar -->
         <dependency>
-            <groupId>com.sf</groupId>
-            <artifactId>bdus-dist-client</artifactId>
-            <version>4.6</version>
+            <groupId>com.ctg.mq</groupId>
+            <artifactId>ctg-mq-api</artifactId>
+            <version>2.4.0</version>
             <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/resources/lib/bdus-dist-client-4.6-20240109.072441-4.jar</systemPath>
+            <systemPath>${pom.basedir}/src/main/resources/lib/ctg-mq-api-2.4.0.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>com.sf</groupId>
-            <artifactId>bdus-dist-common</artifactId>
-            <version>4.6</version>
+            <groupId>com.ctg.mq</groupId>
+            <artifactId>ctg-mq-client</artifactId>
+            <version>2.4.0</version>
             <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/resources/lib/bdus-dist-common-4.6-20240109.072511-4.jar</systemPath>
+            <systemPath>${pom.basedir}/src/main/resources/lib/ctg-mq-client-2.4.0.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>org.apache.axis</groupId>
-            <artifactId>axis</artifactId>
-            <version>1.4</version>
+            <groupId>com.ctg.mq</groupId>
+            <artifactId>ctg-mq-common</artifactId>
+            <version>2.4.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/src/main/resources/lib/ctg-mq-common-2.4.0.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>javax.xml.rpc</groupId>
-            <artifactId>javax.xml.rpc-api</artifactId>
-            <version>1.1.1</version>
+            <groupId>com.ctg.mq</groupId>
+            <artifactId>ctg-mq-example</artifactId>
+            <version>2.4.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/src/main/resources/lib/ctg-mq-example-2.4.0.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>org.apache.axis</groupId>
-            <artifactId>axis-jaxrpc</artifactId>
-            <version>1.4</version>
+            <groupId>com.ctg.mq</groupId>
+            <artifactId>ctg-mq-remoting</artifactId>
+            <version>2.4.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/src/main/resources/lib/ctg-mq-remoting-2.4.0.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>commons-discovery</groupId>
-            <artifactId>commons-discovery</artifactId>
-            <version>0.2</version>
+            <groupId>com.ctg.mq</groupId>
+            <artifactId>ctg-mq-srvutil</artifactId>
+            <version>2.4.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/src/main/resources/lib/ctg-mq-srvutil-2.4.0.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>wsdl4j</groupId>
-            <artifactId>wsdl4j</artifactId>
-            <version>1.6.3</version>
+            <groupId>com.ctg.mq</groupId>
+            <artifactId>ctg-mq-store</artifactId>
+            <version>2.4.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/src/main/resources/lib/ctg-mq-store-2.4.0.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>com.ctg.mq</groupId>
+            <artifactId>ctg-mq-tools</artifactId>
+            <version>2.4.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/src/main/resources/lib/ctg-mq-tools-2.4.0.jar</systemPath>
+        </dependency>
+
     </dependencies>
 
     <build>

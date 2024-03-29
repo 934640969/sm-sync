@@ -5,7 +5,7 @@
     <property name="PROJECT" value="eetrust" />
     <property name="ROOT" value="logs/${PROJECT}/" />
     <property name="FILESIZE" value="20MB" />
-    <property name="MAXHISTORY" value="100" />
+    <property name="MAXHISTORY" value="7" />
     <timestamp key="DATETIME" datePattern="yyyy-MM-dd HH:mm:ss" />
     <!-- 控制台打印 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -57,6 +57,6 @@
     <root level="INFO">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="ERROR" />
-        <!--<appender-ref ref="INFO" />-->
+        <appender-ref ref="INFO" />
     </root>
 </configuration>
