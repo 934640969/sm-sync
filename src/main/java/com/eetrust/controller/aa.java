@@ -25,13 +25,11 @@ public class aa {
 
     public String bb(){
         log.info("test>>>");
-        log.info("systemKey->"+systemKey);
         return "200";
     }
     @RequestMapping("/cc")
     public String cc(){
-        log.info("test>>>");
         log.info("systemKey->"+systemKey);
-        return "200";
+        return systemKey;
     }
 }
