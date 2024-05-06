@@ -24,31 +24,31 @@ public class MqConsumerRunner implements ApplicationRunner {
     @Autowired
     private MssConsumerQueueListenerImpl mssConsumerQueueListener;
 	
-    @Value("${com.xxx.ctgmq.consumer.mss.groupName}")
+    @Value("${com.xjsm.ctgmq.consumer.mss.groupName}")
     private String mssConsumerGroupName;
 	
-	@Value("${com.xxx.ctgmq.consumer.emp.groupName}")
+	@Value("${com.xjsm.ctgmq.consumer.emp.groupName}")
     private String empConsumerGroupName;
 	
-	@Value("${com.xxx.ctgmq.emp.topic}")
+	@Value("${com.xjsm.ctgmq.emp.topic}")
     private String empTopic;
 	
-	@Value("${com.xxx.ctgmq.mss.topic}")
+	@Value("${com.xjsm.ctgmq.mss.topic}")
     private String mssTopic;
 
-    @Value("${com.xxx.ctgmq.namesrvAddr}")
+    @Value("${com.xjsm.ctgmq.namesrvAddr}")
     private String namesrvAddr;
 
-    @Value("${com.xxx.ctgmq.namesrvAuthID}")
+    @Value("${com.xjsm.ctgmq.namesrvAuthID}")
     private String namesrvAuthID;
 
-    @Value("${com.xxx.ctgmq.namesrvAuthPwd}")
+    @Value("${com.xjsm.ctgmq.namesrvAuthPwd}")
     private String namesrvAuthPwd;
 
-    @Value("${com.xxx.ctgmq.consumer.clusterName}")
+    @Value("${com.xjsm.ctgmq.consumer.clusterName}")
     private String clusterName;
 
-    @Value("${com.xxx.ctgmq.consumer.tenantID}")
+    @Value("${com.xjsm.ctgmq.consumer.tenantID}")
     private String tenantID;
 
     public IMQPushConsumer getConsumer(String consumerGroupName){
