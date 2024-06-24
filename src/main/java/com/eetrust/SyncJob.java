@@ -9,6 +9,9 @@ import com.eetrust.util.WebServiceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @Author huangg
  * @create 2024/2/22 11:28
@@ -36,9 +39,12 @@ public class SyncJob {
 
     public void sync(){
         log.info("开始同步");
-        String getAllOrgsUrl=oaUrl+"IdealService/getAllOrgs.htm?sysCode="+sysCode;
+        //String getAllOrgsUrl=oaUrl+"IdealService/getAllOrgs.htm?sysCode="+sysCode;
+        String getAllOrgsUrl=oaUrl+"IdealService/getAllOrgs.htm";
+        Map param=new HashMap<String,String>();
+        param.put("sysCode",sysCode);
         log.info("getAllOrgsUrl->"+getAllOrgsUrl);
-        String s = HttpUtil.get(getAllOrgsUrl);
+        String s =HttpUtil.get(getAllOrgsUrl,param,30000);
         log.info("getAllOrgs->"+s);
         JSONObject jsonObject = JSON.parseObject(s);
         Boolean success = jsonObject.getBoolean("success");
@@ -82,9 +88,13 @@ public class SyncJob {
 
     }
     private void getDept(String parentOrgCode) {
-        String getAllDepartsUrl=oaUrl+"IdealService/getAllDeparts.htm?sysCode="+sysCode+"&orgCode="+ parentOrgCode;
+      //  String getAllDepartsUrl=oaUrl+"IdealService/getAllDeparts.htm?sysCode="+sysCode+"&orgCode="+ parentOrgCode;
+        String getAllDepartsUrl=oaUrl+"IdealService/getAllDeparts.htm";
         log.info("getAllDepartsUrl->"+getAllDepartsUrl);
-        String s = HttpUtil.get(getAllDepartsUrl);
+        Map param=new HashMap<String,String>();
+        param.put("sysCode",sysCode);
+        param.put("orgCode",parentOrgCode);
+        String s = HttpUtil.get(getAllDepartsUrl,param,30000);
         log.info("getAllDeparts->"+s);
         JSONObject jsonObject = JSON.parseObject(s);
         Boolean success = jsonObject.getBoolean("success");
@@ -124,9 +134,13 @@ public class SyncJob {
     }
 
     private void getUser(String parentOrgCode) {
-        String getEmployeeListUrl=oaUrl+"IdealService/getEmployeeList.htm?sysCode="+sysCode+"&orgCode="+ parentOrgCode;
+       // String getEmployeeListUrl=oaUrl+"IdealService/getEmployeeList.htm?sysCode="+sysCode+"&orgCode="+ parentOrgCode;
+        String getEmployeeListUrl=oaUrl+"IdealService/getEmployeeList.htm";
         log.info("getEmployeeListUrl->"+getEmployeeListUrl);
-        String s = HttpUtil.get(getEmployeeListUrl);
+        Map param=new HashMap<String,String>();
+        param.put("sysCode",sysCode);
+        param.put("orgCode",parentOrgCode);
+        String s = HttpUtil.get(getEmployeeListUrl,param,30000);
         log.info("getEmployeeListUrl->"+s);
         JSONObject jsonObject = JSON.parseObject(s);
         Boolean success = jsonObject.getBoolean("success");

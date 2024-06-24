@@ -22,11 +22,10 @@ public class WebServiceUtils {
 			// 将WebService的服务路径加入到Call实例中，并为Call设置服务的位置
 			URL url = new URL(endpoint);
 			call.setTargetEndpointAddress(url);
-			call.setOperationName(new QName("http://SyncXmlServiceImpl.com/", "dataSyncXml"));
-			call.addParameter("syncXml", org.apache.axis.encoding.XMLType.XSD_STRING,
-                    javax.xml.rpc.ParameterMode.IN);
 			// 调用WebService方法
-			String result = String.valueOf(call.invoke(new Object[] {xml}));
+			call.setOperationName("orgAndUserSync");
+			String password="eetrust";
+			String result = String.valueOf(call.invoke(new Object[] {password,xml}));
 			log.info("webserviceInvok->result-> "+result);
 		} catch (Exception e) {
 			log.error("webserviceInvok->Exception->",e);
