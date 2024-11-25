@@ -58,7 +58,7 @@ public class BdusDistributionController {
     @RequestMapping(method = RequestMethod.POST)
     public void distribute(HttpServletRequest request,
                            HttpServletResponse response) throws IOException {
-        log.info("Received BDUS data distribution request");
+        log.info("Received BDUS data distribution request --|");
         distributionService.distribute(request, response);
     }
 }
