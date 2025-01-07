@@ -2,7 +2,7 @@ package com.eetrust.impl;
 
 import com.sf.bdus.dist.client.repository.DataRepository;
 import com.sf.bdus.dist.common.context.DataContext;
-import com.sf.bdus.dist.common.dto.OrgDataDTO;
+import com.sf.bdus.dist.common.dto.AggOrgDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,11 +18,11 @@ import static com.eetrust.util.WebServiceUtils.webserviceInvok;
 /**
  * @Author huangg
  * @create 2024/1/16 14:16
- * 组织同步实现类
+ * 聚合组织主数据
  */
 @Repository
-public class DeptSync implements DataRepository<OrgDataDTO> {
-    private static final Logger log = LoggerFactory.getLogger(DeptSync.class);
+public class DeptSync2 implements DataRepository<AggOrgDTO> {
+    private static final Logger log = LoggerFactory.getLogger(DeptSync2.class);
 
     @Value("${sm.url}")
     private String smUrl;
@@ -30,13 +30,13 @@ public class DeptSync implements DataRepository<OrgDataDTO> {
     private Long rootCode;
 
     @Override
-    public void save(Iterator<OrgDataDTO> iterator, DataContext dataContext) throws IOException {
-        log.info("开始同步OrgDataDTO数据");
+    public void save(Iterator<AggOrgDTO> iterator, DataContext dataContext) throws IOException {
+        log.info("开始同步AggOrgDTO数据");
         final int batchSize = 100; // 每次保存的记录数目，在处理大量数据时，为了避免将全部数据加载到内存，从而导致内存溢出
-        List<OrgDataDTO> orgDatas = new ArrayList<>(batchSize);
+        List<AggOrgDTO> orgDatas = new ArrayList<>(batchSize);
         while (iterator.hasNext()) {
-            OrgDataDTO orgDataDTO = iterator.next();
-            orgDatas.add(orgDataDTO);
+            AggOrgDTO aggOrgDTO = iterator.next();
+            orgDatas.add(aggOrgDTO);
             if (orgDatas.size() >= batchSize) {
                 // 保存数据
                 baocun(orgDatas);
@@ -49,11 +49,11 @@ public class DeptSync implements DataRepository<OrgDataDTO> {
         }
     }
 
-    private void baocun(List<OrgDataDTO> orgDatas) {
-        log.info("开始保存OrgDataDTO数据");
-        for (OrgDataDTO orgDataDTO:orgDatas){
-            Long orgIdParent = orgDataDTO.getOrgIdParent();
-            if (orgDataDTO.getOrgId().equals(rootCode)){
+    private void baocun(List<AggOrgDTO> orgDatas) {
+        log.info("开始保存AggOrgDTO数据");
+        for (AggOrgDTO aggOrgDTO:orgDatas){
+            Long orgIdParent = aggOrgDTO.getOrgIdParent();
+            if (aggOrgDTO.getOrgId().equals(rootCode)){
                 orgIdParent= rootCode;
             }
             String xml="<root>" +
@@ -61,11 +61,11 @@ public class DeptSync implements DataRepository<OrgDataDTO> {
                     "<srcContent></srcContent>" +
                     "<dataContent>" +
                     "<syncContent dataType=\"1\" operType=\"1\">" +
-                    "<syncUnicode>"+orgDataDTO.getOrgId()+"</syncUnicode>" +
+                    "<syncUnicode>"+aggOrgDTO.getOrgId()+"</syncUnicode>" +
                     "<newContent>" +
                     "<baseInfo>" +
-                    "<deptName>"+orgDataDTO.getOrgName()+"</deptName>" +
-                    "<deptUniCode>"+orgDataDTO.getOrgId()+"</deptUniCode>" +
+                    "<deptName>"+aggOrgDTO.getOrgName()+"</deptName>" +
+                    "<deptUniCode>"+aggOrgDTO.getOrgId()+"</deptUniCode>" +
                     "<deptStatus>1</deptStatus>" +
                     "<showNum>10</showNum>"+
                     "<isCorp>0</isCorp>" +

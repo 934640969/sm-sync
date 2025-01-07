@@ -29,7 +29,7 @@ public class UserSync2 implements DataRepository<AggEmpDTO> {
 
     @Override
     public void save(Iterator<AggEmpDTO> iterator, DataContext dataContext) throws IOException {
-        log.info("开始同步聚合人员数据");
+        log.info("开始同步AggEmpDTO数据");
         final int batchSize = 100; // 每次保存的记录数目，在处理大量数据时，为了避免将全部数据加载到内存，从而导致内存溢出
         List<AggEmpDTO> aggEmpDTOS = new ArrayList<>(batchSize);
         while (iterator.hasNext()) {
@@ -48,7 +48,7 @@ public class UserSync2 implements DataRepository<AggEmpDTO> {
     }
 
     private void baocun(List<AggEmpDTO> aggEmpDTOS) {
-        log.info("开始保存聚合人员数据");
+        log.info("开始保存AggEmpDTO数据");
         for (AggEmpDTO aggEmpDTO:aggEmpDTOS){
             String xml="<root>" +
                     "<privateKey>UAP_2oSY90</privateKey>" +
@@ -61,7 +61,7 @@ public class UserSync2 implements DataRepository<AggEmpDTO> {
                     "<loginName>"+aggEmpDTO.getEmpNum()+"</loginName>" +
                     "<accountStatus>1</accountStatus>" +
                     "<userName>"+aggEmpDTO.getEmpName()+"</userName>" +
-                    "<secLevel>0</secLevel>" +
+                    "<secLevel>1</secLevel>" +
                     "</baseInfo>" +
                     "<parentInfo>" +
                     "<parentCode>"+aggEmpDTO.getOrgId()+"</parentCode>" +
