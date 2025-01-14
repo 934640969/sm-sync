@@ -61,7 +61,7 @@ public class UserSync implements DataRepository<EmpDataDTO> {
                     "<loginName>"+empDataDTO.getEmpNum()+"</loginName>" +
                     "<accountStatus>1</accountStatus>" +
                     "<userName>"+empDataDTO.getEmpName()+"</userName>" +
-                    "<secLevel>1</secLevel>" +
+                    "<secLevel>5</secLevel>" +
                     "</baseInfo>" +
                     "<parentInfo>" +
                     "<parentCode>"+empDataDTO.getOrgId()+"</parentCode>" +

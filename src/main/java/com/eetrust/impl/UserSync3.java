@@ -62,7 +62,7 @@ public class UserSync3 implements DataRepository<UcUserInfoDataDTO> {
                     "<loginName>"+ucUserInfoDataDTO.getJobNumber()+"</loginName>" +
                     "<accountStatus>1</accountStatus>" +
                     "<userName>"+ucUserInfoDataDTO.getName()+"</userName>" +
-                    "<secLevel>1</secLevel>" +
+                    "<secLevel>5</secLevel>" +
                     "</baseInfo>" +
                     "<parentInfo>" +
                     "<parentCode>"+ucUserInfoDataDTO.getAccounts().get(0).getAuthority()+"</parentCode>" +
