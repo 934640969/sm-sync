@@ -56,6 +56,11 @@ public class DeptSync3 implements DataRepository<KexOrgDTO> {
             if (kexOrgDTO.getOrgId().equals(rootCode)){
                 orgIdParent= rootCode;
             }
+            //顺丰存在多个根组织情况 父级为0为根组织
+            Long orgId = kexOrgDTO.getOrgId();
+            if (orgIdParent.equals(0L)){
+                orgIdParent=orgId;
+            }
             String xml="<root>" +
                     "<privateKey>UAP_2oSY90</privateKey>" +
                     "<srcContent></srcContent>" +
