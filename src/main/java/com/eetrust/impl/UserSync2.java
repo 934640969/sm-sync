@@ -1,19 +1,18 @@
 package com.eetrust.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.sf.bdus.dist.client.repository.DataRepository;
 import com.sf.bdus.dist.common.context.DataContext;
 import com.sf.bdus.dist.common.dto.AggEmpDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import static com.eetrust.util.WebServiceUtils.webserviceInvok;
 
 /**
  * @Author huangg
@@ -24,8 +23,8 @@ import static com.eetrust.util.WebServiceUtils.webserviceInvok;
 public class UserSync2 implements DataRepository<AggEmpDTO> {
     private static final Logger log = LoggerFactory.getLogger(UserSync2.class);
 
-    @Value("${sm.url}")
-    private String smUrl;
+    @Autowired
+    private SyncDataIncreService syncDataIncreService;
 
     @Override
     public void save(Iterator<AggEmpDTO> iterator, DataContext dataContext) throws IOException {
@@ -50,24 +49,12 @@ public class UserSync2 implements DataRepository<AggEmpDTO> {
     private void baocun(List<AggEmpDTO> aggEmpDTOS) {
         log.info("开始保存AggEmpDTO数据");
         for (AggEmpDTO aggEmpDTO:aggEmpDTOS){
-            String xml="<root>" +
-                    "<privateKey>UAP_2oSY90</privateKey>" +
-                    "<srcContent></srcContent>" +
-                    "<dataContent>" +
-                    "<syncContent dataType=\"2\" operType=\"1\">" +
-                    "<syncUnicode>"+aggEmpDTO.getEmpNum()+"</syncUnicode>" +
-                    "<newContent>" +
-                    "<baseInfo>" +
-                    "<loginName>"+aggEmpDTO.getEmpNum()+"</loginName>" +
-                    "<accountStatus>1</accountStatus>" +
-                    "<userName>"+aggEmpDTO.getEmpName()+"</userName>" +
-                    "<secLevel>5</secLevel>" +
-                    "</baseInfo>" +
-                    "<parentInfo>" +
-                    "<parentCode>"+aggEmpDTO.getOrgId()+"</parentCode>" +
-                    "</parentInfo>" +
-                    "</newContent></syncContent></dataContent></root>";
-            webserviceInvok(smUrl,xml);
+            String jsonString = JSON.toJSONString(aggEmpDTO);
+            log.info("aggEmpDTO->{}", jsonString);
+            String empName = aggEmpDTO.getEmpName();
+            String empNum = aggEmpDTO.getEmpNum();
+            Long orgId = aggEmpDTO.getOrgId();
+            syncDataIncreService.saveUser(empNum,empName,orgId);
         }
     }
 }

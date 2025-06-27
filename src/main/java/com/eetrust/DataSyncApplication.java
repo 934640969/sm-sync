@@ -1,9 +1,13 @@
 package com.eetrust;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
+@MapperScan("com.eetrust.mapper")
+@EnableScheduling
 public class DataSyncApplication {
 
     public static void main(String[] args) {

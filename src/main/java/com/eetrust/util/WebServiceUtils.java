@@ -17,8 +17,8 @@ public class WebServiceUtils {
 		webserviceInvok("http://10.3.44.33:8090/securedoc/clientinterface/syncData/ISyncWebService",xml);
 	}
 
-	public static void webserviceInvok(String endpoint,String xml) {
-		log.info("webserviceInvok->xml-> "+xml);
+	public static String webserviceInvok(String endpoint, String xml) {
+        log.info("webserviceInvok->xml-> {}", xml);
 		// 创建Service实例
 		Service service = new Service();
 		// 通过Service实例创建Call实例
@@ -35,9 +35,11 @@ public class WebServiceUtils {
                     javax.xml.rpc.ParameterMode.IN);
 			call.setReturnType(org.apache.axis.encoding.XMLType.XSD_STRING);
 			String result = String.valueOf(call.invoke(new Object[] {xml}));
-			log.info("webserviceInvok->result-> "+result);
+            log.info("webserviceInvok->result-> {}", result);
+			return  result;
 		} catch (Exception e) {
 			log.error("webserviceInvok->Exception->",e);
+			return "<?xml version=\"1.0\" encoding=\"GBK\"?><returnData><status>0</status><errcode></errcode><errormsg>推送报错 "+e+"</errormsg></returnData>";
 		}
 	}
 }

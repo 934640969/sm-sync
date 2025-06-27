@@ -29,7 +29,7 @@ public class aa {
     }
     @RequestMapping("/cc")
     public String cc(){
-        log.info("systemKey->"+systemKey);
+        log.info("systemKey->{}", systemKey);
         return systemKey;
     }
 }

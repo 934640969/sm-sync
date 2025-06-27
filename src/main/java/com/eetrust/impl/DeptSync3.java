@@ -1,10 +1,12 @@
 package com.eetrust.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.sf.bdus.dist.client.repository.DataRepository;
 import com.sf.bdus.dist.common.context.DataContext;
 import com.sf.bdus.dist.common.dto.KexOrgDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static com.eetrust.util.WebServiceUtils.webserviceInvok;
+import static com.eetrust.util.xmlUtil.removeXmlSpecialChars;
 
 /**
  * @Author huangg
@@ -24,10 +27,11 @@ import static com.eetrust.util.WebServiceUtils.webserviceInvok;
 public class DeptSync3 implements DataRepository<KexOrgDTO> {
     private static final Logger log = LoggerFactory.getLogger(DeptSync3.class);
 
-    @Value("${sm.url}")
-    private String smUrl;
     @Value("${rootCode}")
     private Long rootCode;
+
+    @Autowired
+    private SyncDataIncreService syncDataIncreService;
 
     @Override
     public void save(Iterator<KexOrgDTO> iterator, DataContext dataContext) throws IOException {
@@ -52,6 +56,8 @@ public class DeptSync3 implements DataRepository<KexOrgDTO> {
     private void baocun(List<KexOrgDTO> orgDatas) {
         log.info("开始保存KexOrgDTO数据");
         for (KexOrgDTO kexOrgDTO:orgDatas){
+            String jsonString = JSON.toJSONString(kexOrgDTO);
+            log.info("kexOrgDTO->{}", jsonString);
             Long orgIdParent = kexOrgDTO.getParentOrgId();
             if (kexOrgDTO.getOrgId().equals(rootCode)){
                 orgIdParent= rootCode;
@@ -61,25 +67,8 @@ public class DeptSync3 implements DataRepository<KexOrgDTO> {
             if (orgIdParent.equals(0L)){
                 orgIdParent=orgId;
             }
-            String xml="<root>" +
-                    "<privateKey>UAP_2oSY90</privateKey>" +
-                    "<srcContent></srcContent>" +
-                    "<dataContent>" +
-                    "<syncContent dataType=\"1\" operType=\"1\">" +
-                    "<syncUnicode>"+kexOrgDTO.getOrgId()+"</syncUnicode>" +
-                    "<newContent>" +
-                    "<baseInfo>" +
-                    "<deptName>"+kexOrgDTO.getOrgName()+"</deptName>" +
-                    "<deptUniCode>"+kexOrgDTO.getOrgId()+"</deptUniCode>" +
-                    "<deptStatus>1</deptStatus>" +
-                    "<showNum>10</showNum>"+
-                    "<isCorp>0</isCorp>" +
-                    "</baseInfo>" +
-                    "<parentInfo>" +
-                    "<parentCode>"+orgIdParent+"</parentCode>" +
-                    "</parentInfo>" +
-                    "</newContent></syncContent></dataContent></root>";
-            webserviceInvok(smUrl,xml);
+            String orgName = kexOrgDTO.getOrgName();
+            syncDataIncreService.saveDept(orgId, orgIdParent, orgName);
         }
     }
 }

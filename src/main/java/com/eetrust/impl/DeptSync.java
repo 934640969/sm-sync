@@ -1,10 +1,12 @@
 package com.eetrust.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.sf.bdus.dist.client.repository.DataRepository;
 import com.sf.bdus.dist.common.context.DataContext;
 import com.sf.bdus.dist.common.dto.OrgDataDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -12,8 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import static com.eetrust.util.WebServiceUtils.webserviceInvok;
 
 /**
  * @Author huangg
@@ -24,10 +24,11 @@ import static com.eetrust.util.WebServiceUtils.webserviceInvok;
 public class DeptSync implements DataRepository<OrgDataDTO> {
     private static final Logger log = LoggerFactory.getLogger(DeptSync.class);
 
-    @Value("${sm.url}")
-    private String smUrl;
     @Value("${rootCode}")
     private Long rootCode;
+
+    @Autowired
+    private SyncDataIncreService syncDataIncreService;
 
     @Override
     public void save(Iterator<OrgDataDTO> iterator, DataContext dataContext) throws IOException {
@@ -52,6 +53,8 @@ public class DeptSync implements DataRepository<OrgDataDTO> {
     private void baocun(List<OrgDataDTO> orgDatas) {
         log.info("开始保存OrgDataDTO数据");
         for (OrgDataDTO orgDataDTO:orgDatas){
+            String jsonString = JSON.toJSONString(orgDataDTO);
+            log.info("orgDataDTO->{}", jsonString);
             Long orgIdParent = orgDataDTO.getOrgIdParent();
             if (orgDataDTO.getOrgId().equals(rootCode)){
                 orgIdParent= rootCode;
@@ -61,33 +64,10 @@ public class DeptSync implements DataRepository<OrgDataDTO> {
             if (orgIdParent.equals(0L)){
                 orgIdParent=orgId;
             }
-            String xml="<root>" +
-                    "<privateKey>UAP_2oSY90</privateKey>" +
-                    "<srcContent></srcContent>" +
-                    "<dataContent>" +
-                    "<syncContent dataType=\"1\" operType=\"1\">" +
-                    "<syncUnicode>"+orgDataDTO.getOrgId()+"</syncUnicode>" +
-                    "<newContent>" +
-                    "<baseInfo>" +
-                    "<deptName>"+orgDataDTO.getOrgName()+"</deptName>" +
-                    "<deptUniCode>"+orgDataDTO.getOrgId()+"</deptUniCode>" +
-                    "<deptStatus>1</deptStatus>" +
-                    "<showNum>10</showNum>"+
-                    "<isCorp>0</isCorp>" +
-                    "</baseInfo>" +
-                    "<parentInfo>" +
-                    "<parentCode>"+orgIdParent+"</parentCode>" +
-                    "</parentInfo>" +
-                    "</newContent></syncContent></dataContent></root>";
-            webserviceInvok(smUrl,xml);
+            String orgName = orgDataDTO.getOrgName();
+            syncDataIncreService.saveDept(orgId, orgIdParent, orgName);
         }
     }
 
 
-    public static void main(String[] args) {
-        Long orgIdParent = 0L;
-        if (orgIdParent.equals(0L)){
-            System.out.println("0");
-        }
-    }
 }
