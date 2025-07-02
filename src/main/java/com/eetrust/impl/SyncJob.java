@@ -69,5 +69,6 @@ public class SyncJob {
                 flag = false;
             }
         }
+        log.info("处理待同步数据结束");
     }
 }
