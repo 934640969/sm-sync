@@ -1,5 +1,6 @@
 package com.eetrust.util;
 
+import cn.hutool.http.HttpUtil;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -7,6 +8,8 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,11 +64,30 @@ public class WebServiceUtils {
         }
     }
 
-    	public static void main(String[] args) {
+    	public static void main(String[] args) throws DocumentException {
 		// webservice调用
 		String xml="<root><privateKey>UAP_2oSY90</privateKey><srcContent></srcContent><dataContent><syncContent dataType=\"1\" operType=\"1\"><syncUnicode>0410000043</syncUnicode><newContent><baseInfo><deptName>顺丰</deptName><deptUniCode>0410000043</deptUniCode><showNum>9999</showNum><deptStatus>1</deptStatus><isCorp>1</isCorp></baseInfo><parentInfo><parentCode>MRBM</parentCode></parentInfo></newContent></syncContent></dataContent></root>";
-		 xml="<root><privateKey>UAP_2oSY90</privateKey><srcContent></srcContent><dataContent><syncContent dataType=\"2\" operType=\"1\"><syncUnicode>zhangs</syncUnicode><newContent><baseInfo><loginName>zhangs</loginName><userName>张三</userName><secLevel>5</secLevel><accountStatus>1</accountStatus></baseInfo><parentInfo><parentCode>MRBM</parentCode></parentInfo></newContent></syncContent></dataContent></root>";
-		System.out.println(xml);
-		webserviceInvok("http://10.3.46.78:8090/securedoc/clientinterface/syncData/ISyncWebService",xml);
-	}
+//		 xml="<root><privateKey>UAP_2oSY90</privateKey><srcContent></srcContent><dataContent><syncContent dataType=\"2\" operType=\"1\"><syncUnicode>zhangs</syncUnicode><newContent><baseInfo><loginName>zhangs</loginName><userName>张三</userName><secLevel>5</secLevel><accountStatus>1</accountStatus></baseInfo><parentInfo><parentCode>MRBM</parentCode></parentInfo></newContent></syncContent></dataContent></root>";
+//		System.out.println(xml);
+//		webserviceInvok("http://10.3.46.78:8090/securedoc/clientinterface/syncData/ISyncWebService",xml);
+
+            String a="<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:syn=\"http://SyncXmlServiceImpl.com/\">\n" +
+                    "   <soapenv:Header/>\n" +
+                    "   <soapenv:Body>\n" +
+                    "      <syn:dataSync>\n" +
+                    "         <!--Optional:-->\n" +
+                    "         <syncXml><![CDATA["+ xml+"]]></syncXml>\n" +
+                    "      </syn:dataSync>\n" +
+                    "   </soapenv:Body>\n" +
+                    "</soapenv:Envelope>";
+
+            String body = HttpUtil.createPost("http://10.3.46.78:8090/securedoc/clientinterface/syncData/ISyncWebService").body(a).execute().body();
+            System.out.println(body);
+            String xmlResult = body.replace("&lt;", "<").replace("&gt;", ">").replace("&quot;","\"").replace("<?xml version=\"1.0\" encoding=\"GBK\"?>","");
+            log.info(xmlResult);
+            Document doc = DocumentHelper.getDocument(xmlResult);
+            String status = doc.getRootElement().element("Body").element("dataSyncResponse").element("return").element("returnData").element("status").getText();
+            String errormsg = doc.getRootElement().element("Body").element("dataSyncResponse").element("return").element("returnData").element("errormsg").getText();
+            System.out.println("status:"+status+" errormsg:"+errormsg);
+            }
 }
