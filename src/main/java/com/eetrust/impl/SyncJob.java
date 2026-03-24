@@ -31,6 +31,9 @@ public class SyncJob {
     private String smUrl;
     @Value("${errorCount}")
     private Integer errorCount;
+    @Value("${sleepTime:1000}")
+    private  int sleepTime;
+
 
 
     /**
@@ -44,7 +47,7 @@ public class SyncJob {
         while (flag) {
             List<TSyncDataIncre> tSyncDataIncres = tSyncDataIncreMapper.selectByStateInAndOrder();
             for (TSyncDataIncre tSyncDataIncre : tSyncDataIncres) {
-                String s = WebServiceUtils.webserviceInvok(smUrl, tSyncDataIncre.getContent());
+                String s = WebServiceUtils.webserviceInvok(smUrl, tSyncDataIncre.getContent(),sleepTime);
                 //<?xml version="1.0" encoding="GBK"?><returnData><status>1</status><errcode></errcode><errormsg>用户同步成功</errormsg></returnData>
                 //<?xml version="1.0" encoding="GBK"?><returnData><status>0</status><errcode></errcode><errormsg>同步用户的组织机构不存在</errormsg></returnData>
                 //<?xml version="1.0" encoding="GBK"?><returnData><status>1</status><errcode></errcode><errormsg>组织机构同步成功</errormsg></returnData>

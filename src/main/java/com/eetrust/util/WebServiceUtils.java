@@ -23,33 +23,33 @@ public class WebServiceUtils {
      * @param xml 请求参数XML字符串
      * @return 响应结果
      */
-    public static String webserviceInvok(String endpoint, String xml) {
+    public static String webserviceInvok(String endpoint, String xml, int sleepTime) {
 
         log.info("webserviceInvok->xml-> {}", xml);
         try {
             // 创建ServiceClient实例
             ServiceClient serviceClient = new ServiceClient();
-            
+
             // 设置目标地址
             Options options = new Options();
             options.setTo(new EndpointReference(endpoint));
             options.setAction("dataSync"); // 设置SOAPAction
             serviceClient.setOptions(options);
-            
+
             // 创建命名空间
             OMFactory factory = OMAbstractFactory.getOMFactory();
             OMNamespace namespace = factory.createOMNamespace("http://SyncXmlServiceImpl.com/", "syn");
-            
+
             // 创建方法元素
             OMElement methodElement = factory.createOMElement("dataSync", namespace);
-            
+
             // 创建参数元素
             OMElement paramElement = factory.createOMElement("syncXml", null); // 不设置命名空间
             paramElement.setText(xml);
-            
+
             // 添加参数到方法中
             methodElement.addChild(paramElement);
-            
+
             // 发送请求并获取响应
             OMElement response = serviceClient.sendReceive(methodElement);
 
@@ -57,6 +57,9 @@ public class WebServiceUtils {
             OMElement returnElement = response.getFirstElement();
             String result = returnElement.getText();
             log.info("webserviceInvok->result-> {}", result);
+
+            Thread.sleep(sleepTime);//睡一下减小商密压力
+
             return result;
         } catch (Exception e) {
             log.error("webserviceInvok->Exception->", e);
