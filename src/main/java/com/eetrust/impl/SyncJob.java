@@ -63,9 +63,13 @@ public class SyncJob {
                     tSyncDataIncre.setState(syncContant.SYNC_STATUS_FAILED);
                     tSyncDataIncre.setErrorCount(tSyncDataIncre.getErrorCount() + 1);
                     if (tSyncDataIncre.getErrorCount() >= errorCount) {
-                        tSyncDataIncre.setState(syncContant.SYNC_STATUS_STOP);
+                        // 失败次数达到阈值，备份并删除
+                        log.info("数据同步失败{}次，备份并删除。ID: {}, uniqueField: {}",
+                                tSyncDataIncre.getErrorCount(), tSyncDataIncre.getId(), tSyncDataIncre.getUniqueField());
+                        syncDataIncreService.backupAndDeleteIncre(tSyncDataIncre);
+                    } else {
+                        tSyncDataIncreMapper.updateById(tSyncDataIncre);
                     }
-                    tSyncDataIncreMapper.updateById(tSyncDataIncre);
                 }
             }
             if (tSyncDataIncres.isEmpty()) {
@@ -73,5 +77,23 @@ public class SyncJob {
             }
         }
         log.info("处理待同步数据结束");
+    }
+
+    /**
+     * 每月备份日志表数据（安全版本）
+     * 每月1号凌晨2点执行
+     * 采用基于ID范围的备份策略，避免在持续插入数据时丢失数据
+     */
+    @Scheduled(cron = "${logBakcron}")
+    public void backupLogMonthly() {
+        log.info("开始执行月度日志备份任务");
+        try {
+            long startTime = System.currentTimeMillis();
+            syncDataIncreService.backupAndClearLogSafe();
+            long endTime = System.currentTimeMillis();
+            log.info("月度日志备份任务执行成功，耗时: {} ms", (endTime - startTime));
+        } catch (Exception e) {
+            log.error("月度日志备份任务执行失败", e);
+        }
     }
 }
