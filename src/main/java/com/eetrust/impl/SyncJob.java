@@ -34,8 +34,6 @@ public class SyncJob {
     @Value("${sleepTime:1000}")
     private  int sleepTime;
 
-
-
     /**
      * 处理待同步数据
      */
@@ -63,10 +61,10 @@ public class SyncJob {
                     tSyncDataIncre.setState(syncContant.SYNC_STATUS_FAILED);
                     tSyncDataIncre.setErrorCount(tSyncDataIncre.getErrorCount() + 1);
                     if (tSyncDataIncre.getErrorCount() >= errorCount) {
-                        // 失败次数达到阈值，备份并删除
-                        log.info("数据同步失败{}次，备份并删除。ID: {}, uniqueField: {}",
+                        // 失败次数达到阈值，直接删除
+                        log.info("数据同步失败{}次，直接删除。ID: {}, uniqueField: {}",
                                 tSyncDataIncre.getErrorCount(), tSyncDataIncre.getId(), tSyncDataIncre.getUniqueField());
-                        syncDataIncreService.backupAndDeleteIncre(tSyncDataIncre);
+                        syncDataIncreService.deleteFailedIncre(tSyncDataIncre);
                     } else {
                         tSyncDataIncreMapper.updateById(tSyncDataIncre);
                     }
@@ -80,20 +78,19 @@ public class SyncJob {
     }
 
     /**
-     * 每月备份日志表数据（安全版本）
+     * 每月清理旧日志数据（保留月数从配置读取）
      * 每月1号凌晨2点执行
-     * 采用基于ID范围的备份策略，避免在持续插入数据时丢失数据
      */
     @Scheduled(cron = "${logBakcron}")
-    public void backupLogMonthly() {
-        log.info("开始执行月度日志备份任务");
+    public void cleanOldLogsMonthly() {
+        log.info("开始执行月度日志清理任务");
         try {
             long startTime = System.currentTimeMillis();
-            syncDataIncreService.backupAndClearLogSafe();
+            syncDataIncreService.cleanOldLogs();
             long endTime = System.currentTimeMillis();
-            log.info("月度日志备份任务执行成功，耗时: {} ms", (endTime - startTime));
+            log.info("月度日志清理任务执行成功，耗时: {} ms", (endTime - startTime));
         } catch (Exception e) {
-            log.error("月度日志备份任务执行失败", e);
+            log.error("月度日志清理任务执行失败", e);
         }
     }
 }

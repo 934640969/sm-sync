@@ -3,7 +3,8 @@ package com.eetrust.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.eetrust.domain.TSyncDataIncreLog;
 import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
+
+import java.util.Date;
 
 /**
  * @Entity generator.domain.TSyncDataIncreLog
@@ -25,27 +26,12 @@ public interface TSyncDataIncreLogMapper extends BaseMapper<TSyncDataIncreLog> {
     Long getMinId();
 
     /**
-     * 备份指定ID范围的数据到备份表
-     * @param minId 最小ID（包含）
-     * @param maxId 最大ID（不包含）
+     * 删除指定日期之前的日志数据（限制每次删除数量）
+     * @param cutoffDate 截止日期
+     * @param limit 每次删除的最大数量
      * @return 影响的行数
      */
-    @Insert("INSERT INTO t_sync_data_incre_log_bak (TYPE, UNIQUE_FIELD, PARENT_CODE, NAME, CONTENT, CREATE_TIME, STATE, RESULT) " +
-            "SELECT TYPE, UNIQUE_FIELD, PARENT_CODE, NAME, CONTENT, CREATE_TIME, STATE, RESULT FROM t_sync_data_incre_log WHERE ID >= #{minId} AND ID < #{maxId}")
-    int backupLogsByIdRange(@org.apache.ibatis.annotations.Param("minId") Long minId, 
-                            @org.apache.ibatis.annotations.Param("maxId") Long maxId);
-
-    /**
-     * 删除指定ID范围的数据
-     * @param minId 最小ID（包含）
-     * @param maxId 最大ID（不包含）
-     * @return 影响的行数
-     */
-    @Delete("DELETE FROM t_sync_data_incre_log WHERE ID >= #{minId} AND ID < #{maxId}")
-    int deleteLogsByIdRange(@org.apache.ibatis.annotations.Param("minId") Long minId,
-                            @org.apache.ibatis.annotations.Param("maxId") Long maxId);
+    @Delete("DELETE FROM t_sync_data_incre_log WHERE CREATE_TIME < #{cutoffDate} ORDER BY CREATE_TIME ASC LIMIT #{limit}")
+    int deleteLogsBeforeDateWithLimit(@org.apache.ibatis.annotations.Param("cutoffDate") Date cutoffDate,
+                                      @org.apache.ibatis.annotations.Param("limit") int limit);
 }
-
-
-
-
