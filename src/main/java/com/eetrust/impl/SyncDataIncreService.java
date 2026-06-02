@@ -1,10 +1,15 @@
 package com.eetrust.impl;
 
+import cn.hutool.crypto.digest.DigestUtil;
 import com.eetrust.contant.syncContant;
+import com.eetrust.domain.DeptMd5;
 import com.eetrust.domain.TSyncDataIncre;
 import com.eetrust.domain.TSyncDataIncreLog;
+import com.eetrust.domain.UserMd5;
+import com.eetrust.mapper.DeptMd5Mapper;
 import com.eetrust.mapper.TSyncDataIncreLogMapper;
 import com.eetrust.mapper.TSyncDataIncreMapper;
+import com.eetrust.mapper.UserMd5Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +33,10 @@ public class SyncDataIncreService {
     private TSyncDataIncreMapper tSyncDataIncreMapper;
     @Autowired
     private TSyncDataIncreLogMapper tSyncDataIncreLogMapper;
+    @Autowired
+    private DeptMd5Mapper deptMd5Mapper;
+    @Autowired
+    private UserMd5Mapper userMd5Mapper;
     @Value("${logRetentionMonths:3}")
     private Integer logRetentionMonths;
     @Value("${logBatchDeleteSize:1000}")
@@ -59,6 +68,13 @@ public class SyncDataIncreService {
                 "</parentInfo>" +
                 "</newContent></syncContent></dataContent></root>";
 
+        String md5Hex = DigestUtil.md5Hex(xml);
+        DeptMd5 deptMd5 = deptMd5Mapper.selectByOrgId(String.valueOf(orgId));
+        if (deptMd5 != null && md5Hex.equals(deptMd5.getMd5())) {
+            log.info("部门[{}]数据未变更，跳过保存", orgId);
+            return;
+        }
+
         TSyncDataIncre tSyncDataIncre = new TSyncDataIncre();
         tSyncDataIncre.setType(syncContant.SYNC_TYPE_DEPT);
         tSyncDataIncre.setUniqueField(String.valueOf(orgId));
@@ -71,6 +87,16 @@ public class SyncDataIncreService {
         tSyncDataIncre.setState(syncContant.SYNC_STATUS_PENDING);
         tSyncDataIncre.setErrorCount(0);
         tSyncDataIncreMapper.insert(tSyncDataIncre);
+
+        if (deptMd5 != null) {
+            deptMd5.setMd5(md5Hex);
+            deptMd5Mapper.updateById(deptMd5);
+        } else {
+            deptMd5 = new DeptMd5();
+            deptMd5.setOrgId(String.valueOf(orgId));
+            deptMd5.setMd5(md5Hex);
+            deptMd5Mapper.insert(deptMd5);
+        }
     }
 
     /**
@@ -99,6 +125,13 @@ public class SyncDataIncreService {
                 "</parentInfo>" +
                 "</newContent></syncContent></dataContent></root>";
 
+        String md5Hex = DigestUtil.md5Hex(xml);
+        UserMd5 userMd5 = userMd5Mapper.selectByEmpNum(empNum);
+        if (userMd5 != null && md5Hex.equals(userMd5.getMd5())) {
+            log.info("用户[{}]数据未变更，跳过保存", empNum);
+            return;
+        }
+
         TSyncDataIncre tSyncDataIncre = new TSyncDataIncre();
         tSyncDataIncre.setType(syncContant.SYNC_TYPE_USER);
         tSyncDataIncre.setUniqueField(empNum);
@@ -111,6 +144,16 @@ public class SyncDataIncreService {
         tSyncDataIncre.setState(syncContant.SYNC_STATUS_PENDING);
         tSyncDataIncre.setErrorCount(0);
         tSyncDataIncreMapper.insert(tSyncDataIncre);
+
+        if (userMd5 != null) {
+            userMd5.setMd5(md5Hex);
+            userMd5Mapper.updateById(userMd5);
+        } else {
+            userMd5 = new UserMd5();
+            userMd5.setEmpNum(empNum);
+            userMd5.setMd5(md5Hex);
+            userMd5Mapper.insert(userMd5);
+        }
 
     }
 
@@ -140,6 +183,13 @@ public class SyncDataIncreService {
                 "</parentInfo>" +
                 "</newContent></syncContent></dataContent></root>";
 
+        String md5Hex = DigestUtil.md5Hex(xml);
+        UserMd5 userMd5 = userMd5Mapper.selectByEmpNum(jobNumber);
+        if (userMd5 != null && md5Hex.equals(userMd5.getMd5())) {
+            log.info("用户[{}]数据未变更，跳过保存", jobNumber);
+            return;
+        }
+
         TSyncDataIncre tSyncDataIncre = new TSyncDataIncre();
         tSyncDataIncre.setType(syncContant.SYNC_TYPE_USER);
         tSyncDataIncre.setUniqueField(jobNumber);
@@ -152,6 +202,16 @@ public class SyncDataIncreService {
         tSyncDataIncre.setState(syncContant.SYNC_STATUS_PENDING);
         tSyncDataIncre.setErrorCount(0);
         tSyncDataIncreMapper.insert(tSyncDataIncre);
+
+        if (userMd5 != null) {
+            userMd5.setMd5(md5Hex);
+            userMd5Mapper.updateById(userMd5);
+        } else {
+            userMd5 = new UserMd5();
+            userMd5.setEmpNum(jobNumber);
+            userMd5.setMd5(md5Hex);
+            userMd5Mapper.insert(userMd5);
+        }
     }
     public void saveLog(TSyncDataIncre tSyncDataIncre, String result, int syncStatus){
         TSyncDataIncreLog tSyncDataIncreLog = new TSyncDataIncreLog();
