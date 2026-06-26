@@ -18,7 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.locks.ReentrantLock;
 
+import com.eetrust.util.LockManager;
 import static com.eetrust.util.xmlUtil.removeXmlSpecialChars;
 
 /**
@@ -37,6 +39,8 @@ public class SyncDataIncreService {
     private DeptMd5Mapper deptMd5Mapper;
     @Autowired
     private UserMd5Mapper userMd5Mapper;
+    @Autowired
+    private LockManager lockManager;
     @Value("${logRetentionMonths:3}")
     private Integer logRetentionMonths;
     @Value("${logBatchDeleteSize:1000}")
@@ -95,7 +99,22 @@ public class SyncDataIncreService {
             deptMd5 = new DeptMd5();
             deptMd5.setOrgId(String.valueOf(orgId));
             deptMd5.setMd5(md5Hex);
-            deptMd5Mapper.insert(deptMd5);
+            ReentrantLock lock = lockManager.getLock("dept:" + orgId);
+            try {
+                lock.lock();
+                deptMd5 = deptMd5Mapper.selectByOrgId(String.valueOf(orgId));
+                if (deptMd5 == null) {
+                    deptMd5 = new DeptMd5();
+                    deptMd5.setOrgId(String.valueOf(orgId));
+                    deptMd5.setMd5(md5Hex);
+                    deptMd5Mapper.insert(deptMd5);
+                } else {
+                    deptMd5.setMd5(md5Hex);
+                    deptMd5Mapper.updateById(deptMd5);
+                }
+            } finally {
+                lock.unlock();
+            }
         }
     }
 
@@ -149,10 +168,22 @@ public class SyncDataIncreService {
             userMd5.setMd5(md5Hex);
             userMd5Mapper.updateById(userMd5);
         } else {
-            userMd5 = new UserMd5();
-            userMd5.setEmpNum(empNum);
-            userMd5.setMd5(md5Hex);
-            userMd5Mapper.insert(userMd5);
+            ReentrantLock lock = lockManager.getLock("user:" + empNum);
+            try {
+                lock.lock();
+                userMd5 = userMd5Mapper.selectByEmpNum(empNum);
+                if (userMd5 == null) {
+                    userMd5 = new UserMd5();
+                    userMd5.setEmpNum(empNum);
+                    userMd5.setMd5(md5Hex);
+                    userMd5Mapper.insert(userMd5);
+                } else {
+                    userMd5.setMd5(md5Hex);
+                    userMd5Mapper.updateById(userMd5);
+                }
+            } finally {
+                lock.unlock();
+            }
         }
 
     }
@@ -207,10 +238,22 @@ public class SyncDataIncreService {
             userMd5.setMd5(md5Hex);
             userMd5Mapper.updateById(userMd5);
         } else {
-            userMd5 = new UserMd5();
-            userMd5.setEmpNum(jobNumber);
-            userMd5.setMd5(md5Hex);
-            userMd5Mapper.insert(userMd5);
+            ReentrantLock lock = lockManager.getLock("user:" + jobNumber);
+            try {
+                lock.lock();
+                userMd5 = userMd5Mapper.selectByEmpNum(jobNumber);
+                if (userMd5 == null) {
+                    userMd5 = new UserMd5();
+                    userMd5.setEmpNum(jobNumber);
+                    userMd5.setMd5(md5Hex);
+                    userMd5Mapper.insert(userMd5);
+                } else {
+                    userMd5.setMd5(md5Hex);
+                    userMd5Mapper.updateById(userMd5);
+                }
+            } finally {
+                lock.unlock();
+            }
         }
     }
     public void saveLog(TSyncDataIncre tSyncDataIncre, String result, int syncStatus){
