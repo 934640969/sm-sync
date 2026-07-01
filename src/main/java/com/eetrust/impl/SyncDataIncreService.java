@@ -73,48 +73,39 @@ public class SyncDataIncreService {
                 "</newContent></syncContent></dataContent></root>";
 
         String md5Hex = DigestUtil.md5Hex(xml);
-        DeptMd5 deptMd5 = deptMd5Mapper.selectByOrgId(String.valueOf(orgId));
-        if (deptMd5 != null && md5Hex.equals(deptMd5.getMd5())) {
-            log.info("部门[{}]数据未变更，跳过保存", orgId);
-            return;
-        }
-
-        TSyncDataIncre tSyncDataIncre = new TSyncDataIncre();
-        tSyncDataIncre.setType(syncContant.SYNC_TYPE_DEPT);
-        tSyncDataIncre.setUniqueField(String.valueOf(orgId));
-        tSyncDataIncre.setParentCode(String.valueOf(orgIdParent));
-        tSyncDataIncre.setName(orgName);
-        tSyncDataIncre.setContent(xml);
-        Date date = new Date();
-        tSyncDataIncre.setCreateTime(date);
-        tSyncDataIncre.setUpdateTime(date);
-        tSyncDataIncre.setState(syncContant.SYNC_STATUS_PENDING);
-        tSyncDataIncre.setErrorCount(0);
-        tSyncDataIncreMapper.insert(tSyncDataIncre);
-
-        if (deptMd5 != null) {
-            deptMd5.setMd5(md5Hex);
-            deptMd5Mapper.updateById(deptMd5);
-        } else {
-            deptMd5 = new DeptMd5();
-            deptMd5.setOrgId(String.valueOf(orgId));
-            deptMd5.setMd5(md5Hex);
-            ReentrantLock lock = lockManager.getLock("dept:" + orgId);
-            try {
-                lock.lock();
-                deptMd5 = deptMd5Mapper.selectByOrgId(String.valueOf(orgId));
-                if (deptMd5 == null) {
-                    deptMd5 = new DeptMd5();
-                    deptMd5.setOrgId(String.valueOf(orgId));
-                    deptMd5.setMd5(md5Hex);
-                    deptMd5Mapper.insert(deptMd5);
-                } else {
-                    deptMd5.setMd5(md5Hex);
-                    deptMd5Mapper.updateById(deptMd5);
-                }
-            } finally {
-                lock.unlock();
+        ReentrantLock lock = lockManager.getLock("dept:" + orgId);
+        lock.lock();
+        try {
+            DeptMd5 deptMd5 = deptMd5Mapper.selectByOrgId(String.valueOf(orgId));
+            if (deptMd5 != null && md5Hex.equals(deptMd5.getMd5())) {
+                log.info("部门[{}]数据未变更，跳过保存", orgId);
+                return;
             }
+
+            TSyncDataIncre tSyncDataIncre = new TSyncDataIncre();
+            tSyncDataIncre.setType(syncContant.SYNC_TYPE_DEPT);
+            tSyncDataIncre.setUniqueField(String.valueOf(orgId));
+            tSyncDataIncre.setParentCode(String.valueOf(orgIdParent));
+            tSyncDataIncre.setName(orgName);
+            tSyncDataIncre.setContent(xml);
+            Date date = new Date();
+            tSyncDataIncre.setCreateTime(date);
+            tSyncDataIncre.setUpdateTime(date);
+            tSyncDataIncre.setState(syncContant.SYNC_STATUS_PENDING);
+            tSyncDataIncre.setErrorCount(0);
+            tSyncDataIncreMapper.insert(tSyncDataIncre);
+
+            if (deptMd5 != null) {
+                deptMd5.setMd5(md5Hex);
+                deptMd5Mapper.updateById(deptMd5);
+            } else {
+                deptMd5 = new DeptMd5();
+                deptMd5.setOrgId(String.valueOf(orgId));
+                deptMd5.setMd5(md5Hex);
+                deptMd5Mapper.insert(deptMd5);
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -145,45 +136,39 @@ public class SyncDataIncreService {
                 "</newContent></syncContent></dataContent></root>";
 
         String md5Hex = DigestUtil.md5Hex(xml);
-        UserMd5 userMd5 = userMd5Mapper.selectByEmpNum(empNum);
-        if (userMd5 != null && md5Hex.equals(userMd5.getMd5())) {
-            log.info("用户[{}]数据未变更，跳过保存", empNum);
-            return;
-        }
-
-        TSyncDataIncre tSyncDataIncre = new TSyncDataIncre();
-        tSyncDataIncre.setType(syncContant.SYNC_TYPE_USER);
-        tSyncDataIncre.setUniqueField(empNum);
-        tSyncDataIncre.setParentCode(String.valueOf(orgId));
-        tSyncDataIncre.setName(empName);
-        tSyncDataIncre.setContent(xml);
-        Date date = new Date();
-        tSyncDataIncre.setCreateTime(date);
-        tSyncDataIncre.setUpdateTime(date);
-        tSyncDataIncre.setState(syncContant.SYNC_STATUS_PENDING);
-        tSyncDataIncre.setErrorCount(0);
-        tSyncDataIncreMapper.insert(tSyncDataIncre);
-
-        if (userMd5 != null) {
-            userMd5.setMd5(md5Hex);
-            userMd5Mapper.updateById(userMd5);
-        } else {
-            ReentrantLock lock = lockManager.getLock("user:" + empNum);
-            try {
-                lock.lock();
-                userMd5 = userMd5Mapper.selectByEmpNum(empNum);
-                if (userMd5 == null) {
-                    userMd5 = new UserMd5();
-                    userMd5.setEmpNum(empNum);
-                    userMd5.setMd5(md5Hex);
-                    userMd5Mapper.insert(userMd5);
-                } else {
-                    userMd5.setMd5(md5Hex);
-                    userMd5Mapper.updateById(userMd5);
-                }
-            } finally {
-                lock.unlock();
+        ReentrantLock lock = lockManager.getLock("user:" + empNum);
+        lock.lock();
+        try {
+            UserMd5 userMd5 = userMd5Mapper.selectByEmpNum(empNum);
+            if (userMd5 != null && md5Hex.equals(userMd5.getMd5())) {
+                log.info("用户[{}]数据未变更，跳过保存", empNum);
+                return;
             }
+
+            TSyncDataIncre tSyncDataIncre = new TSyncDataIncre();
+            tSyncDataIncre.setType(syncContant.SYNC_TYPE_USER);
+            tSyncDataIncre.setUniqueField(empNum);
+            tSyncDataIncre.setParentCode(String.valueOf(orgId));
+            tSyncDataIncre.setName(empName);
+            tSyncDataIncre.setContent(xml);
+            Date date = new Date();
+            tSyncDataIncre.setCreateTime(date);
+            tSyncDataIncre.setUpdateTime(date);
+            tSyncDataIncre.setState(syncContant.SYNC_STATUS_PENDING);
+            tSyncDataIncre.setErrorCount(0);
+            tSyncDataIncreMapper.insert(tSyncDataIncre);
+
+            if (userMd5 != null) {
+                userMd5.setMd5(md5Hex);
+                userMd5Mapper.updateById(userMd5);
+            } else {
+                userMd5 = new UserMd5();
+                userMd5.setEmpNum(empNum);
+                userMd5.setMd5(md5Hex);
+                userMd5Mapper.insert(userMd5);
+            }
+        } finally {
+            lock.unlock();
         }
 
     }
@@ -215,45 +200,39 @@ public class SyncDataIncreService {
                 "</newContent></syncContent></dataContent></root>";
 
         String md5Hex = DigestUtil.md5Hex(xml);
-        UserMd5 userMd5 = userMd5Mapper.selectByEmpNum(jobNumber);
-        if (userMd5 != null && md5Hex.equals(userMd5.getMd5())) {
-            log.info("用户[{}]数据未变更，跳过保存", jobNumber);
-            return;
-        }
-
-        TSyncDataIncre tSyncDataIncre = new TSyncDataIncre();
-        tSyncDataIncre.setType(syncContant.SYNC_TYPE_USER);
-        tSyncDataIncre.setUniqueField(jobNumber);
-        tSyncDataIncre.setParentCode(colDeptid);
-        tSyncDataIncre.setName(name);
-        tSyncDataIncre.setContent(xml);
-        Date date = new Date();
-        tSyncDataIncre.setCreateTime(date);
-        tSyncDataIncre.setUpdateTime(date);
-        tSyncDataIncre.setState(syncContant.SYNC_STATUS_PENDING);
-        tSyncDataIncre.setErrorCount(0);
-        tSyncDataIncreMapper.insert(tSyncDataIncre);
-
-        if (userMd5 != null) {
-            userMd5.setMd5(md5Hex);
-            userMd5Mapper.updateById(userMd5);
-        } else {
-            ReentrantLock lock = lockManager.getLock("user:" + jobNumber);
-            try {
-                lock.lock();
-                userMd5 = userMd5Mapper.selectByEmpNum(jobNumber);
-                if (userMd5 == null) {
-                    userMd5 = new UserMd5();
-                    userMd5.setEmpNum(jobNumber);
-                    userMd5.setMd5(md5Hex);
-                    userMd5Mapper.insert(userMd5);
-                } else {
-                    userMd5.setMd5(md5Hex);
-                    userMd5Mapper.updateById(userMd5);
-                }
-            } finally {
-                lock.unlock();
+        ReentrantLock lock = lockManager.getLock("user:" + jobNumber);
+        lock.lock();
+        try {
+            UserMd5 userMd5 = userMd5Mapper.selectByEmpNum(jobNumber);
+            if (userMd5 != null && md5Hex.equals(userMd5.getMd5())) {
+                log.info("用户[{}]数据未变更，跳过保存", jobNumber);
+                return;
             }
+
+            TSyncDataIncre tSyncDataIncre = new TSyncDataIncre();
+            tSyncDataIncre.setType(syncContant.SYNC_TYPE_USER);
+            tSyncDataIncre.setUniqueField(jobNumber);
+            tSyncDataIncre.setParentCode(colDeptid);
+            tSyncDataIncre.setName(name);
+            tSyncDataIncre.setContent(xml);
+            Date date = new Date();
+            tSyncDataIncre.setCreateTime(date);
+            tSyncDataIncre.setUpdateTime(date);
+            tSyncDataIncre.setState(syncContant.SYNC_STATUS_PENDING);
+            tSyncDataIncre.setErrorCount(0);
+            tSyncDataIncreMapper.insert(tSyncDataIncre);
+
+            if (userMd5 != null) {
+                userMd5.setMd5(md5Hex);
+                userMd5Mapper.updateById(userMd5);
+            } else {
+                userMd5 = new UserMd5();
+                userMd5.setEmpNum(jobNumber);
+                userMd5.setMd5(md5Hex);
+                userMd5Mapper.insert(userMd5);
+            }
+        } finally {
+            lock.unlock();
         }
     }
     public void saveLog(TSyncDataIncre tSyncDataIncre, String result, int syncStatus){
